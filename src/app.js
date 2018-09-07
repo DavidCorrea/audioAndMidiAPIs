@@ -10,6 +10,7 @@ window.AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext();
 let oscillators = {};
 let masterGainNode = context.createGain();
+let compressorNode = context.createDynamicsCompressor();
 
 if(navigator.requestMIDIAccess) {
     console.log('¡Tenemos Acceso MIDI!');
@@ -65,8 +66,12 @@ navigator.requestMIDIAccess().then((midiAccess) => {
                 oscillators[midiData[1]] = oscillator;
 
                 velocity.gain.setValueAtTime(midiData[2] / 127, context.currentTime);
+                masterGainNode.gain.setValueAtTime(1, context.currentTime);
+
                 oscillator.connect(velocity);
-                velocity.connect(context.destination);
+                velocity.connect(compressorNode);
+                compressorNode.connect(masterGainNode);
+                masterGainNode.connect(context.destination);
 
                 oscillator.start();
             } else if(midiData[0] === 128) {
