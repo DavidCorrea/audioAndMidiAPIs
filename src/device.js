@@ -30,6 +30,9 @@ class Device {
             this._changeSelectedButtonTo(this.triangleButton);
             this.oscillatorType = 'triangle';
         };
+
+        this.volumeLeft = document.getElementById('volume-left');
+        this.volumeRight = document.getElementById('volume-right');
     };
 
     _changeSelectedButtonTo(newSelectedButton) {
@@ -56,6 +59,11 @@ class Device {
 
     changeNoteDisplayValueTo(newValue) {
         this.noteDisplayValue.innerHTML = newValue;
+    };
+
+    changeVolumeDisplay(newPercentage) {
+        this.volumeLeft.style.setProperty('clip-path', "polygon(0px " + newPercentage + "%, 100% " + newPercentage + "%, 100% 100%, 0% 100%)");
+        this.volumeRight.style.setProperty('clip-path', "polygon(0px " + newPercentage + "%, 100% " + newPercentage + "%, 100% 100%, 0% 100%)");
     };
 }
 

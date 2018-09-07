@@ -20,7 +20,7 @@ html, body {
 }
 
 .device {
-    padding: 10px;
+    padding: 20px;
     height: 400px;
     width: 100%;
     max-width: 800px;
@@ -124,6 +124,24 @@ html, body {
                             background: #252525;
                         }
                     }
+                }
+            }
+
+            .volumes-section {
+                display: flex;
+                flex: 1;
+                justify-content: space-between;
+                width: 40px;
+                margin-top: 20px;
+
+                .volume-display {
+                    flex: 1;
+                    width: 10px;
+                    margin-bottom: 5px;
+                    transition: clip-path 0.1s ease-in-out;
+                    background: linear-gradient(to bottom, #d34504 0%,#70f968 100%);
+                    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
+                    border-radius: 10px;
                 }
             }
         }

@@ -56,12 +56,13 @@ navigator.requestMIDIAccess().then((midiAccess) => {
 
                 device.changeVelocityDisplayValueTo(midiData[2]);
                 device.changeNoteDisplayValueTo(midiNoteToName(midiData[1]));
+                device.changeVolumeDisplay(0);
 
                 oscillator.type = device.oscillatorType;
                 oscillator.frequency.value = midiNoteToFrequency(midiData[1]);
                 oscillators[midiData[1]] = oscillator;
                 oscillator.connect(context.destination);
-                
+
                 oscillator.start();
             } else if(midiData[0] === 128) {
                 notesBeingPlayed.pop();
@@ -72,6 +73,7 @@ navigator.requestMIDIAccess().then((midiAccess) => {
 
             if(notesBeingPlayed.length === 0) {
                 device.turnOffMidiInDisplay();
+                device.changeVolumeDisplay(100);
             } else {
                 device.turnOnMidiInDisplay();
             }
