@@ -5,8 +5,39 @@ class Device {
         this.noteDisplayValue = document.getElementById('note-display-value');
         this.velocityDisplayValue = document.getElementById('velocity-display-value');
 
-        this.oscillatorType = 'sawtooth';
-        this.oscillatorTypes = ['sine', 'square', 'sawtooth', 'triangle'];
+        this.sineButton = document.getElementById('sine-button');
+        this.squareButton = document.getElementById('square-button');
+        this.sawtoothButton = document.getElementById('sawtooth-button');
+        this.triangleButton = document.getElementById('triangle-button');
+        this.currentyActiveButton = this.sineButton;
+
+        this.sineButton.onclick = () => {
+            this._changeSelectedButtonTo(this.sineButton);
+            this.oscillatorType = 'sine';
+        };
+
+        this.squareButton.onclick = () => {
+            this._changeSelectedButtonTo(this.squareButton);
+            this.oscillatorType = 'square';
+        };
+
+        this.sawtoothButton.onclick = () => {
+            this._changeSelectedButtonTo(this.sawtoothButton);
+            this.oscillatorType = 'sawtooth';
+        };
+
+        this.triangleButton.onclick = () => {
+            this._changeSelectedButtonTo(this.triangleButton);
+            this.oscillatorType = 'triangle';
+        };
+    };
+
+    _changeSelectedButtonTo(newSelectedButton) {
+        this.currentyActiveButton.classList.remove('active');
+        this.currentyActiveButton.classList.add('inactive');
+        this.currentyActiveButton = newSelectedButton;
+        this.currentyActiveButton.classList.remove('inactive');
+        this.currentyActiveButton.classList.add('active');
     };
 
     turnOnMidiInDisplay() {

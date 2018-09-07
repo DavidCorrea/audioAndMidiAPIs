@@ -53,18 +53,16 @@ navigator.requestMIDIAccess().then((midiAccess) => {
             if(midiData[0] === 144) {
                 notesBeingPlayed.push('noteon');
                 let oscillator = context.createOscillator();
-                let delay = context.createDelay(100);
 
                 device.changeVelocityDisplayValueTo(midiData[2]);
                 device.changeNoteDisplayValueTo(midiNoteToName(midiData[1]));
 
-                delay.delayTime.value = 0;
                 oscillator.type = device.oscillatorType;
                 oscillator.frequency.value = midiNoteToFrequency(midiData[1]);
                 oscillators[midiData[1]] = oscillator;
+                oscillator.connect(context.destination);
+                
                 oscillator.start();
-                oscillator.connect(delay);
-                delay.connect(context.destination)
             } else if(midiData[0] === 128) {
                 notesBeingPlayed.pop();
                 let oscillator = oscillators[midiData[1]];
