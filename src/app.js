@@ -9,6 +9,7 @@ let device = new Device();
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext();
 let oscillators = {};
+let masterGainNode = context.createGain();
 
 if(navigator.requestMIDIAccess) {
     console.log('¡Tenemos Acceso MIDI!');
@@ -52,16 +53,20 @@ navigator.requestMIDIAccess().then((midiAccess) => {
 
             if(midiData[0] === 144) {
                 notesBeingPlayed.push('noteon');
-                let oscillator = context.createOscillator();
-
+                
                 device.changeVelocityDisplayValueTo(midiData[2]);
                 device.changeNoteDisplayValueTo(midiNoteToName(midiData[1]));
-                device.changeVolumeDisplay(0);
+                device.changeVolumeDisplay(midiData[2] / 127 * 100);
 
+                let oscillator = context.createOscillator();
+                let velocity = context.createGain();
                 oscillator.type = device.oscillatorType;
                 oscillator.frequency.value = midiNoteToFrequency(midiData[1]);
                 oscillators[midiData[1]] = oscillator;
-                oscillator.connect(context.destination);
+
+                velocity.gain.setValueAtTime(midiData[2] / 127, context.currentTime);
+                oscillator.connect(velocity);
+                velocity.connect(context.destination);
 
                 oscillator.start();
             } else if(midiData[0] === 128) {
@@ -73,7 +78,7 @@ navigator.requestMIDIAccess().then((midiAccess) => {
 
             if(notesBeingPlayed.length === 0) {
                 device.turnOffMidiInDisplay();
-                device.changeVolumeDisplay(100);
+                device.changeVolumeDisplay(0);
             } else {
                 device.turnOnMidiInDisplay();
             }

@@ -62,8 +62,9 @@ class Device {
     };
 
     changeVolumeDisplay(newPercentage) {
-        this.volumeLeft.style.setProperty('clip-path', "polygon(0px " + newPercentage + "%, 100% " + newPercentage + "%, 100% 100%, 0% 100%)");
-        this.volumeRight.style.setProperty('clip-path', "polygon(0px " + newPercentage + "%, 100% " + newPercentage + "%, 100% 100%, 0% 100%)");
+        let height = 100 - newPercentage;
+        this.volumeLeft.style.setProperty('clip-path', "polygon(0px " + height + "%, 100% " + height + "%, 100% 100%, 0% 100%)");
+        this.volumeRight.style.setProperty('clip-path', "polygon(0px " + height + "%, 100% " + height + "%, 100% 100%, 0% 100%)");
     };
 }
 
