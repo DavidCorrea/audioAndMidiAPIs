@@ -4,7 +4,9 @@
   "description": "",
   "private": true,
   "scripts": {
-    "server": "webpack-dev-server --color"
+    "postinstall": "npm run build",
+    "start": "webpack-dev-server --color",
+    "build": "webpack --config webpack.config.js"
   },
   "author": "David Correa",
   "license": "ISC",
