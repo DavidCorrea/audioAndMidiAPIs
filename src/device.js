@@ -9,6 +9,8 @@ class Device {
         this.squareButton = document.getElementById('square-button');
         this.sawtoothButton = document.getElementById('sawtooth-button');
         this.triangleButton = document.getElementById('triangle-button');
+        
+        this.oscillatorType = 'sine';
         this.currentyActiveButton = this.sineButton;
 
         this.sineButton.onclick = () => {

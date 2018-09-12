@@ -9,48 +9,50 @@
         </div>
     </div>
     <div class="content">
-        <div class="section">
-            <div class="display-section">
-                <div class="display">
-                    <span id="note-display-value" class="display-value">-</span>
+        <div class="section left">
+            <div class="row">
+                <div class="display-container">
+                    <div class="display">
+                        <span id="note-display-value" class="display-value">-</span>
+                    </div>
+                    <span class="label">NOTE</span>
                 </div>
-                <span class="label">CURRENT NOTE</span>
+        
+                <div class="display-container">
+                    <div class="display">
+                        <span id="velocity-display-value" class="display-value">-</span>
+                    </div>
+                    <span class="label">VELOCITY</span>
+                </div>
             </div>
 
-            <div class="display-section">
-                <div class="display">
-                    <span id="velocity-display-value" class="display-value">-</span>
-                </div>
-                <span class="label">CURRENT VELOCITY</span>
-            </div>
-
-            <div class="display-section row">
-                <div class="button-section">
+            <div class="row">
+                <div class="button-container">
                     <div id="sine-button" class="button active"></div>
                     <span class="label">SINE</span>
                 </div>
-                <div class="button-section">
+                <div class="button-container">
                     <div id="square-button" class="button inactive"></div>
                     <span class="label">SQUARE</span>
                 </div>
-                <div class="button-section">
+                <div class="button-container">
                     <div id="sawtooth-button" class="button inactive"></div>
                     <span class="label">SAWTOOTH</span>
                 </div>
-                <div class="button-section">
+                <div class="button-container">
                     <div id="triangle-button" class="button inactive"></div>
                     <span class="label">TRIANGLE</span>
                 </div>
             </div>
         </div>
-        <div class="section" style="align-items: flex-end">
-            <div class="volumes-section">
-                <div style="display: flex; flex-direction: column; align-items: center; position: relative;">
+        <div class="section right">
+            <div class="volumes-container">
+                <div class="volume-container">
                     <div id="volume-left" class="volume-display"></div>
                     <span class="label">L</span>
                 </div>
 
-                <div style="display: flex; flex-direction: column; align-items: center;">
+                <div class="volume-container">
                     <div id="volume-right" class="volume-display"></div>
                     <span class="label">R</span>
                 </div>
