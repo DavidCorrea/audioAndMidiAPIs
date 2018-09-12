@@ -9,16 +9,17 @@ let device = new Device();
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext();
 let oscillators = {};
+
 let masterGainNode = context.createGain();
 let compressorNode = context.createDynamicsCompressor();
 
-if(navigator.requestMIDIAccess) {
-    console.log('¡Tenemos Acceso MIDI!');
-} else {
-    console.log('La demo se cancela.');
-}
+let firstDelayNode = context.createDelay();
+let firstDelayGainNode = context.createGain();
+firstDelayNode.delayTime.value = 0.50;
 
-let midiSignalIncoming = document.getElementsByClassName('midi-input')[0];
+let secondDelayNode = context.createDelay();
+let secondDelayGainNode = context.createGain();
+secondDelayNode.delayTime.value = 1;
 
 let midiNoteToFrequency = (midiNote) => {
     return Math.pow(2, (midiNote - 69) / 12) * 440;
@@ -61,6 +62,7 @@ navigator.requestMIDIAccess().then((midiAccess) => {
 
                 let oscillator = context.createOscillator();
                 let velocity = context.createGain();
+
                 oscillator.type = device.oscillatorType;
                 oscillator.frequency.value = midiNoteToFrequency(midiData[1]);
                 oscillators[midiData[1]] = oscillator;
@@ -70,14 +72,24 @@ navigator.requestMIDIAccess().then((midiAccess) => {
 
                 oscillator.connect(velocity);
                 velocity.connect(compressorNode);
+                
+                firstDelayGainNode.gain.setValueAtTime(0.3, context.currentTime);
+                velocity.connect(firstDelayGainNode);
+                firstDelayGainNode.connect(firstDelayNode);
+                firstDelayNode.connect(compressorNode);
+
+                secondDelayGainNode.gain.setValueAtTime(0.08, context.currentTime);
+                velocity.connect(secondDelayGainNode);
+                secondDelayGainNode.connect(secondDelayNode);
+                secondDelayNode.connect(compressorNode);
+
                 compressorNode.connect(masterGainNode);
                 masterGainNode.connect(context.destination);
 
                 oscillator.start();
             } else if(midiData[0] === 128) {
                 notesBeingPlayed.pop();
-                let oscillator = oscillators[midiData[1]];
-                oscillator.stop();
+                let oscillator = oscillators[midiData[1]].stop();
                 oscillators[midiData[1]] = null;
             }
 
