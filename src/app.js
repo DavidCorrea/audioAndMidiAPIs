@@ -1,86 +1,85 @@
 import Device from "./device";
 import { isKeyPressedEvent, isKeyReleasedEvent, midiNoteToFrequency, midiNoteToName, maxVelocity } from "./midi";
 
+// jsmidi.davejco.com
+
 const appView = require('./app.html');
 require('./app.scss');
 document.write(appView);
 
+let device = new Device();
+let soundSources = {};
+
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext();
 
-let device = new Device();
-
-let oscillators = {};
-let masterGainNode = context.createGain();
 let compressorNode = context.createDynamicsCompressor();
-let firstDelayNode = context.createDelay();
-let firstDelayGainNode = context.createGain();
-firstDelayNode.delayTime.value = 0.50;
-let secondDelayNode = context.createDelay();
-let secondDelayGainNode = context.createGain();
-secondDelayNode.delayTime.value = 1;
-let filterNode = context.createBiquadFilter();
 
 navigator.requestMIDIAccess().then((midiAccess) => {
     let inputs = midiAccess.inputs;
 
+    midiAccess.onstatechange = () => {
+        inputs = midiAccess.inputs;
+        device.changeNoteDisplayValueTo('-');
+        device.changeVelocityDisplayValueTo('-');
+    };
+
     Array.from(inputs.values()).forEach((midiInput) => {
         midiInput.onmidimessage = (midiMessage) => {
-            let midiData = midiMessage.data;
-            let midiDataEvent = midiData[0];
-            let midiDataKey = midiData[1];
-            let midiDataVelocity = midiData[2];
-            
-            if(isKeyPressedEvent(midiDataEvent)) {
-                device.turnOnMidiInDisplay();
+            let midiMessageData = midiMessage.data;
+            let midiMessageEvent = midiMessageData[0];
+            let midiMessageKey = midiMessageData[1];
+            let midiMessageVelocity = midiMessageData[2];
 
-                device.changeVelocityDisplayValueTo(midiDataVelocity);
-                device.changeNoteDisplayValueTo(midiNoteToName(midiDataKey));
-                device.changeVolumeDisplay(midiDataVelocity / maxVelocity * 100);
+            if(isKeyPressedEvent(midiMessageEvent)) {
+                device.turnOnMidiInDisplay();
+                
+                device.changeNoteDisplayValueTo(midiNoteToName(midiMessageKey));
+                device.changeVelocityDisplayValueTo(midiMessageVelocity);
+                device.changeVolumeDisplay(midiMessageVelocity / maxVelocity * 100);
 
                 let oscillatorNode = context.createOscillator();
-                let velocityNode = context.createGain();
+
+                let firstDelayNode = context.createDelay();
+                firstDelayNode.delayTime.value = 0.50;
+                let firstDelayGainNode = context.createGain();
+                firstDelayGainNode.gain.setValueAtTime(0.3, context.currentTime);
+
+                let secondDelayNode = context.createDelay();
+                secondDelayNode.delayTime.value = 1;
+                let secondDelayGainNode = context.createGain();
+                secondDelayGainNode.gain.setValueAtTime(0.08, context.currentTime);
+
+                let gainNode = context.createGain();
+                gainNode.gain.setValueAtTime(midiMessageVelocity / maxVelocity, context.currentTime);
 
                 oscillatorNode.type = device.oscillatorType;
-                oscillatorNode.frequency.value = midiNoteToFrequency(midiDataKey);
-                oscillators[midiDataKey] = oscillatorNode;
+                oscillatorNode.frequency.value = midiNoteToFrequency(midiMessageKey);
 
-                velocityNode.gain.setValueAtTime(midiDataVelocity / maxVelocity, context.currentTime);
-                masterGainNode.gain.setValueAtTime(1, context.currentTime);
+                oscillatorNode.connect(gainNode);
+                gainNode.connect(compressorNode);
 
-                oscillatorNode.connect(velocityNode);
-                velocityNode.connect(compressorNode);
-                compressorNode.connect(filterNode);
-                
-                firstDelayGainNode.gain.setValueAtTime(0.3, context.currentTime);
-                compressorNode.connect(firstDelayGainNode);
-                firstDelayGainNode.connect(firstDelayNode);
-                firstDelayNode.connect(filterNode);
+                gainNode.connect(firstDelayNode);
+                firstDelayNode.connect(firstDelayGainNode);
+                firstDelayGainNode.connect(compressorNode);
 
-                secondDelayGainNode.gain.setValueAtTime(0.08, context.currentTime);
-                compressorNode.connect(secondDelayGainNode);
-                secondDelayGainNode.connect(secondDelayNode);
-                secondDelayNode.connect(filterNode);
+                gainNode.connect(secondDelayNode);
+                secondDelayNode.connect(secondDelayGainNode);
+                secondDelayGainNode.connect(compressorNode);
 
-                filterNode.type = "lowshelf";
-                filterNode.frequency.setValueAtTime(1000, context.currentTime);
-                filterNode.gain.setValueAtTime(25, context.currentTime);
-
-                filterNode.connect(masterGainNode);
-                masterGainNode.connect(context.destination);
+                compressorNode.connect(context.destination);
 
                 oscillatorNode.start();
-            } else if(isKeyReleasedEvent(midiDataEvent)) {
-                oscillators[midiDataKey].stop();
-                delete oscillators[midiDataKey];
+                soundSources[midiMessageKey] = oscillatorNode;
+            } else if(isKeyReleasedEvent(midiMessageEvent)) {
+                soundSources[midiMessageKey].stop();
+                delete soundSources[midiMessageKey];
             }
 
-            if(Object.keys(oscillators).length === 0) {
+            if(Object.keys(soundSources).length === 0) {
                 device.turnOffMidiInDisplay();
                 device.changeVolumeDisplay(0);
             }
-        }
+        };
     });
-}, () => {
-    console.log('La demo se cancela.');
 });
