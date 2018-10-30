@@ -14,7 +14,7 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-        title: 'JS ft. Audio and Midi APIs',
+        title: 'JSMidi',
         filename: 'index.html'
     }),
     new MiniCssExtractPlugin({

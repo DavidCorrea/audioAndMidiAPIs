@@ -1,6 +1,10 @@
 @import url(https://fonts.googleapis.com/css?family=Aldrich);
+@import url(https://fonts.googleapis.com/css?family=Play);
 
 $font: 'Aldrich', sans-serif;
+$label-font: 'Play', sans-serif;
+$display-color: #232323;
+$display-contrast-color: #a99a48;
 
 html, body {
     font-family: $font;
@@ -21,9 +25,9 @@ html, body {
 
 .device {
     padding: 20px;
-    height: 400px;
+    height: 230px;
     width: 100%;
-    max-width: 800px;
+    max-width: 500px;
     border-radius: 10px;
     background-color: #101010;
     box-shadow: 0px 10px 30px -10px rgba(0,0,0,0.75);
@@ -43,16 +47,16 @@ html, body {
             .display {
                 width: 40px;
                 height: 40px;
-                border-radius: 10px;
+                border-radius: 5px;
                 margin-bottom: 5px;
                 transition: background-color 0.1s ease-in-out;
 
                 &.not-receiving {
-                    background-color: #232323;
+                    background-color: $display-color;
                 }
 
                 &.receiving {
-                    background-color: #DADA49;
+                    background-color: $display-contrast-color;
                 }
             }
         }
@@ -68,80 +72,92 @@ html, body {
     .content {
         display: flex;
         flex: 1;
+        justify-content: space-between;
+        margin-top: 5px;
 
         .section {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            flex: 1;
+            justify-content: space-between;
 
-            .display-section {
-                width: 100%;
-                height: 100px;
-                display: flex;
-                flex-direction: column;
-                margin-bottom: 10px;
+            &.left {
+                flex: 0 0 75%;
 
-                &.row {
-                    flex-direction: row;
-                    justify-content: space-between;
-                }
-
-                .display {
-                    flex: 1;
-                    background: #242424;
-                    margin-bottom: 5px;
-                    border-radius: 10px;
+                .row {
                     display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    justify-content: space-between;
 
-                    .display-value {
-                        font-size: 50px;
-                        color: #c39334;
-                    }
-                }
+                    .display-container {
+                        width: 180px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
 
-                .button-section {
-                    width: 90px;
-                    display: flex; 
-                    flex-direction: column; 
-                    align-items: center;
-
-                    .button {
-                        margin: 0 0 5px 0; 
-                        border-radius: 10px;
-                        flex: 1;
-                        width: 100%;
-                        cursor: pointer;
-                        transition: background 0.1s ease-in-out;
-
-                        &.active {
-                            background: #a99a48; 
+                        .display {
+                            width: 100%;
+                            background: $display-color;
+                            border-radius: 5px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin-bottom: 5px;
+        
+                            .display-value {
+                                font-size: 50px;
+                                color: $display-contrast-color;
+                                font-family: $label-font;
+                            }
                         }
+                    }
 
-                        &.inactive {
-                            background: #252525;
+                    .button-container {
+                        display: flex; 
+                        flex-direction: column; 
+                        align-items: center;
+    
+                        .button {
+                            margin: 0 0 5px 0; 
+                            border-radius: 5px;
+                            flex: 1;
+                            height: 50px;
+                            width: 50px;
+                            cursor: pointer;
+                            transition: background 0.1s ease-in-out;
+    
+                            &.active {
+                                background: $display-contrast-color; 
+                            }
+    
+                            &.inactive {
+                                background: $display-color;
+                            }
                         }
                     }
                 }
             }
 
-            .volumes-section {
-                display: flex;
-                flex: 1;
-                justify-content: space-between;
-                width: 40px;
-                margin-top: 20px;
-
-                .volume-display {
+            &.right {
+                .volumes-container {
+                    display: flex;
                     flex: 1;
-                    width: 10px;
-                    margin-bottom: 5px;
-                    transition: clip-path 0.1s ease-in-out;
-                    background: linear-gradient(to bottom, #d34504 0%,#70f968 100%);
-                    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
-                    border-radius: 10px;
+                    justify-content: space-between;
+                    width: 40px;
+
+                    .volume-container {
+                        display: flex; 
+                        flex-direction: column; 
+                        align-items: center;
+
+                        .volume-display {
+                            flex: 1;
+                            width: 10px;
+                            margin-bottom: 5px;
+                            transition: clip-path 0.2s ease-in-out;
+                            background: linear-gradient(to bottom, #d34504 0%,#70f968 100%);
+                            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
+                            border-radius: 10px;
+                        }
+                    }
                 }
             }
         }
