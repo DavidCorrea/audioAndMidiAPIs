@@ -1,0 +1,39 @@
+.device
+  .header
+    span.title
+      | JSMidi
+    .midi-input
+      .display.not-receiving
+      span.label MIDI IN
+  .content
+    .section.left
+      .row
+        .display-container
+          .display
+            span#note-display-value.display-value -
+          span.label NOTE
+        .display-container
+          .display
+            span#velocity-display-value.display-value -
+          span.label VELOCITY
+      .row
+        .button-container
+          #sine-button.button.active
+          span.label SINE
+        .button-container
+          #square-button.button.inactive
+          span.label SQUARE
+        .button-container
+          #sawtooth-button.button.inactive
+          span.label SAWTOOTH
+        .button-container
+          #triangle-button.button.inactive
+          span.label TRIANGLE
+    .section.right
+      .volumes-container
+        .volume-container
+          #volume-left.volume-display
+          span.label L
+        .volume-container
+          #volume-right.volume-display
+          span.label R

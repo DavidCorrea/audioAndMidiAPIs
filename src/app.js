@@ -3,7 +3,7 @@ import { isKeyPressedEvent, isKeyReleasedEvent, midiNoteToFrequency, midiNoteToN
 
 // jsmidi.davejco.com
 
-const appView = require('./app.html');
+const appView = require('./app.jade');
 require('./app.scss');
 document.write(appView);
 

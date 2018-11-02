@@ -39,6 +39,13 @@ module.exports = {
           ]
         },
         {
+          test: /\.jade$/,
+          loader: [
+            'html-loader',
+            'jade-html-loader'
+          ]
+        },
+        {
           test: /\.js$/,
           exclude: /node_modules/,
           loader: 'babel-loader',
