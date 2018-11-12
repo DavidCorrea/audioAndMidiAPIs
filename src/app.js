@@ -1,7 +1,6 @@
 import Device from "./device";
 import { isKeyPressedEvent, isKeyReleasedEvent, midiNoteToFrequency, midiNoteToName, maxVelocity } from "./midi";
-
-// jsmidi.davejco.com
+import { delayNode, gainNode, oscillatorNode } from "./nodes";
 
 const appView = require('./app.html');
 require('./app.scss');
@@ -14,6 +13,10 @@ window.AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext();
 
 let compressorNode = context.createDynamicsCompressor();
+let firstDelayNode = delayNode(context, 0.50);
+let firstDelayGainNode = gainNode(context, 0.3);
+let secondDelayNode = delayNode(context, 1); 
+let secondDelayGainNode = gainNode(context, 0.08);
 
 navigator.requestMIDIAccess().then((midiAccess) => {
     let inputs = midiAccess.inputs;
@@ -38,41 +41,30 @@ navigator.requestMIDIAccess().then((midiAccess) => {
                 device.changeVelocityDisplayValueTo(midiMessageVelocity);
                 device.changeVolumeDisplay(midiMessageVelocity / maxVelocity * 100);
 
-                let oscillatorNode = context.createOscillator();
+                let currentOscillatorNode = oscillatorNode(context, device.oscillatorType, midiNoteToFrequency(midiMessageKey));
+                let currentGainNode = gainNode(context, midiMessageVelocity / maxVelocity);
+                
+                currentOscillatorNode.connect(currentGainNode);
+                currentGainNode.connect(compressorNode);
 
-                let firstDelayNode = context.createDelay();
-                firstDelayNode.delayTime.value = 0.50;
-                let firstDelayGainNode = context.createGain();
-                firstDelayGainNode.gain.setValueAtTime(0.3, context.currentTime);
-
-                let secondDelayNode = context.createDelay();
-                secondDelayNode.delayTime.value = 1;
-                let secondDelayGainNode = context.createGain();
-                secondDelayGainNode.gain.setValueAtTime(0.08, context.currentTime);
-
-                let gainNode = context.createGain();
-                gainNode.gain.setValueAtTime(midiMessageVelocity / maxVelocity, context.currentTime);
-
-                oscillatorNode.type = device.oscillatorType;
-                oscillatorNode.frequency.value = midiNoteToFrequency(midiMessageKey);
-
-                oscillatorNode.connect(gainNode);
-                gainNode.connect(compressorNode);
-
-                gainNode.connect(firstDelayNode);
+                currentGainNode.connect(firstDelayNode);
                 firstDelayNode.connect(firstDelayGainNode);
                 firstDelayGainNode.connect(compressorNode);
 
-                gainNode.connect(secondDelayNode);
+                currentGainNode.connect(secondDelayNode);
                 secondDelayNode.connect(secondDelayGainNode);
                 secondDelayGainNode.connect(compressorNode);
 
                 compressorNode.connect(context.destination);
 
-                oscillatorNode.start();
-                soundSources[midiMessageKey] = oscillatorNode;
+                currentOscillatorNode.start();
+
+                soundSources[midiMessageKey] = { 
+                    oscillator: currentOscillatorNode,
+                    gain: currentGainNode,
+                };
             } else if(isKeyReleasedEvent(midiMessageEvent)) {
-                soundSources[midiMessageKey].stop();
+                soundSources[midiMessageKey].oscillator.stop();
                 delete soundSources[midiMessageKey];
             }
 
