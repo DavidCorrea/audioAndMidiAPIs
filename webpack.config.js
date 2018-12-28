@@ -14,8 +14,7 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-        title: 'JSMidi',
-        filename: 'index.html'
+        template: path.resolve(__dirname, 'src/index.html')
     }),
     new MiniCssExtractPlugin({
         filename: "index.css"

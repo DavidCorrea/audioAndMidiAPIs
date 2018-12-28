@@ -17,8 +17,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-        title: 'JSMidi | Davejco',
-        filename: 'index.html'
+      template: path.resolve(__dirname, 'src/index.html')
     }),
     new MiniCssExtractPlugin({
         filename: "index.css"
